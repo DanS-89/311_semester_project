@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="anchor_pane" stylesheets="@../css/generalTheme.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextArea layoutX="6.0" layoutY="51.0" prefHeight="343.0" prefWidth="584.0" styleClass="text-area" stylesheets="@../css/generalTheme.css" text="-First Name, Last Name, and Department all need between 2-30 alphabetic characters&#10;-Email must be a farmingdale.edu email address&#10;-URL's must start with http:// or https:// and end in a .url&#10;-The copy function creates a copy of a database record, it generates a unuqie ID for the copy and denotes the email address with an _copy before the @farmingdale.edu&#10;-Existing entries can be edited by clicking on the field in the table view that needs to be changed" wrapText="true">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </TextArea>
+      <Label alignment="TOP_CENTER" layoutX="8.0" layoutY="11.0" prefHeight="44.0" prefWidth="542.0" text="Help" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="26.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

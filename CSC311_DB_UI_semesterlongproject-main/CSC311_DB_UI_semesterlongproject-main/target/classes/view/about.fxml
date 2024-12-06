@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="anchor_pane" stylesheets="@../css/generalTheme.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextArea layoutX="8.0" layoutY="42.0" prefHeight="343.0" prefWidth="584.0" stylesheets="@../css/generalTheme.css" text="-Semester long project developed by Daniel Stevens - R02202263&#10;-Application to log in as a user and add records entries to a database&#10;-Includes functionality to add, edit, delete, copy, and clear the form, this can be done via buttons or menu items&#10;-Changed the view of the UI by adding some different color schemes and changed the spacing of each row in the table view in order to see more records in the database.&#10;-Made seperate Help/About sections covering different aspects of the application&#10;-Made the light theme Farmingdale State College themed and purposed it as a Farmingdale State College Student Record Database&#10;-Disabled the Add button so that it was grayed out if a record was selected in the table view and if the requirements were not met&#10;-Created a seperate enum for Major and put it in an accessible package&#10;-Attempted to add the extra credit but could not complete it in time, you can click an entry in the table view and edit it, including the major comboBox, but adding on the last row does not work.&#10;-Attempted to add the pdf output report but ran into issues with the dependency and which imports to use.&#10;-Added text fields to sign-up page for functionality and linked the sign-up page so it interacts correctly with the backend.&#10;" wrapText="true">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+         <styleClass>
+            <String fx:value="anchor_pane" />
+            <String fx:value="text-area" />
+         </styleClass>
+      </TextArea>
+      <Label alignment="TOP_LEFT" layoutX="8.0" layoutY="11.0" prefHeight="44.0" prefWidth="542.0" text="Developer: Daniel Stevens">
+         <font>
+            <Font name="System Bold" size="26.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
