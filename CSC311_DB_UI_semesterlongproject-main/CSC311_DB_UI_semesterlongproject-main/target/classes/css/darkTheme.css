@@ -210,5 +210,9 @@ table-view .cell:filled {
     -fx-background-color:derive( #6622CC,90%);
 	-fx-background-insets: 2, 0, 0;
 	-fx-background-radius: 2em;
+}
 
+.progress-bar {
+    -fx-accent: derive( #6622CC,80%);
+    -fx-background-color: black;
 }

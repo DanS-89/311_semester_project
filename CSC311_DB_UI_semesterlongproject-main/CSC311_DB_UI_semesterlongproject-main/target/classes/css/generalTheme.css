@@ -8,6 +8,10 @@
 }
 
 .text-area {
-    -fx-background-color: #88ff8e;
+    -fx-background-color: #ffffff;
+}
+
+text-field {
+    -fx-background-color: #ffffff;
 }
 

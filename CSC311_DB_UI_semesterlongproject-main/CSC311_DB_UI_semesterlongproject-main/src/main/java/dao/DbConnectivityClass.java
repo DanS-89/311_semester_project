@@ -175,7 +175,7 @@ public class DbConnectivityClass {
      * Method to insert an object of type Person into the database
      * @param person object type to be added to the database
      */
-    public void insertUser(Person person) {
+    public void insertUser(Person person) throws SQLException {
             connectToDatabase();
             try {
                 Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
@@ -271,6 +271,13 @@ public class DbConnectivityClass {
             return id;
         }
 
+    /**
+     * Method to save a new user to the database
+     * @param username The username to be saved to the database
+     * @param password The password to be saved to the database
+     * @param email The email to be saved to the database
+     * @throws SQLException If there is an issue connecting to the database or executing an insert query
+     */
         public void saveToDatabase(String username, String password, String email) throws SQLException {
             if(!connectToDatabase()){
                 throw new SQLException("Failed to connect to Database");
@@ -289,7 +296,10 @@ public class DbConnectivityClass {
             }
         }
 
-        public void initializeUsersTable(){
+    /**
+     * Initializes a user table if one does not exist within the database
+     */
+    public void initializeUsersTable(){
             try(Connection connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
                 Statement statement = connection.createStatement()) {
                 String createTableSQL = "CREATE TABLE IF NOT EXISTS userList ("
@@ -303,5 +313,4 @@ public class DbConnectivityClass {
                 e.printStackTrace();
             }
         }
-
     }

@@ -8,7 +8,6 @@ import com.azure.storage.blob.BlobContainerClientBuilder;
  * StorageUploader class that handles file uploads to a Blob storage container
  */
 public class StorageUploader {
-
     private BlobContainerClient containerClient;
 
     /**

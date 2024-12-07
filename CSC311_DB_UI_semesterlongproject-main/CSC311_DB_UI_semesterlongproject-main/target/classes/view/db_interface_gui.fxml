@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="920.0" styleClass="anchor_pane" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewmodel.DB_GUI_Controller">
     <children>
@@ -13,36 +14,42 @@
                     <menus>
                         <Menu mnemonicParsing="false" styleClass="menu_options" text="File">
                             <items>
-                                <MenuItem fx:id="newItem" mnemonicParsing="false" onAction="#addUserRecord" styleClass="menu_items" text="New" />
-                                <MenuItem fx:id="ChangePic" mnemonicParsing="false" onAction="#showImage" styleClass="menu_items" text="Change Pic" />
+                                <MenuItem fx:id="newItem" mnemonicParsing="false" onAction="#addUserRecord" styleClass="menu_items" text="New User          Ctrl+N" />
+                                <MenuItem fx:id="ChangePic" mnemonicParsing="false" onAction="#showImage" styleClass="menu_items" text="Change Pic        Ctrl+P" />
                                 <MenuItem fx:id="logOut" mnemonicParsing="false" onAction="#logOut" styleClass="menu_items" text="Log out" />
-                                <MenuItem mnemonicParsing="false" onAction="#closeApplication" styleClass="menu_items" text="Exit Program" />
+                                <MenuItem mnemonicParsing="false" onAction="#closeApplication" styleClass="menu_items" text="Exit Program      Ctrl+X" />
                             </items>
                         </Menu>
                   <Menu mnemonicParsing="false" styleClass="menu_options" text="Edit">
                      <items>
-                        <MenuItem fx:id="editItem" mnemonicParsing="true" onAction="#editRecord" styleClass="menu_items" text="Edit       Ctrl+E" />
-                        <MenuItem fx:id="deleteItem" mnemonicParsing="true" onAction="#deleteRecord" styleClass="menu_items" text="Delete        Ctrl+D" />
-                        <MenuItem fx:id="clearItem" mnemonicParsing="false" onAction="#clearForm" styleClass="menu_items" text="Clear        Ctrl+R" />
-                        <MenuItem fx:id="copyItem" mnemonicParsing="false" onAction="#copyRecord" styleClass="menu_items" text="Copy       Ctrl+C" />
+                        <MenuItem fx:id="addItem" mnemonicParsing="false" onAction="#addNewRecord" text="Add          Ctrl+A" />
+                        <MenuItem fx:id="editItem" mnemonicParsing="true" onAction="#editRecord" styleClass="menu_items" text="Edit           Ctrl+E" />
+                        <MenuItem fx:id="deleteItem" mnemonicParsing="true" onAction="#deleteRecord" styleClass="menu_items" text="Delete       Ctrl+D" />
+                        <MenuItem fx:id="clearItem" mnemonicParsing="false" onAction="#clearForm" styleClass="menu_items" text="Clear         Ctrl+R" />
+                        <MenuItem fx:id="copyItem" mnemonicParsing="false" onAction="#copyRecord" styleClass="menu_items" text="Copy         Ctrl+C" />
                      </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Import/Export">
                     <items>
-                      <MenuItem mnemonicParsing="false" onAction="#onImportCSV" text="Import CSV File" />
-                        <MenuItem mnemonicParsing="false" onAction="#onExportCSV" text="Export CSV File" />
+                      <MenuItem mnemonicParsing="false" onAction="#onImportCSV" text="Import CSV File       Ctrl+I" />
+                        <MenuItem mnemonicParsing="false" onAction="#onExportCSV" text="Export CSV File        Ctrl+O" />
+                    </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Reports">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#showMajorDistributionReport" text="Major Distribution       Ctrl+G" />
                     </items>
                   </Menu>
                         <Menu mnemonicParsing="false" styleClass="menu_options" text="Theme">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#lightTheme" styleClass="menu_items" text="LIGHT THEME" />
-                                <MenuItem mnemonicParsing="false" onAction="#darkTheme" styleClass="menu_items" text="DARK THEME" />
+                                <MenuItem mnemonicParsing="false" onAction="#lightTheme" styleClass="menu_items" text="Light Theme" />
+                                <MenuItem mnemonicParsing="false" onAction="#darkTheme" styleClass="menu_items" text="Dark Theme" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" styleClass="menu_options" text="Help">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#displayAbout" styleClass="menu_items" text="Help" />
-                        <MenuItem mnemonicParsing="false" onAction="#displayAbout" styleClass="menu_items" text="About" />
+                                <MenuItem mnemonicParsing="false" onAction="#displayAbout" styleClass="menu_items" text="Help         Ctrl+H" />
+                        <MenuItem mnemonicParsing="false" onAction="#displayAbout" styleClass="menu_items" text="About       Ctrl+A" />
                             </items>
                         </Menu>
                     </menus>
@@ -60,6 +67,11 @@
                                 </ImageView>
                             </children>
                         </AnchorPane>
+                  <Label prefHeight="125.0" prefWidth="138.0" text="Farmingdale State College Student Records Application" textAlignment="CENTER" textFill="#fffdfd" wrapText="true">
+                     <font>
+                        <Font name="Arial Bold" size="18.0" />
+                     </font>
+                  </Label>
                     </children>
                 </VBox>
             </left>
@@ -131,7 +143,7 @@
                 </VBox>
          </right>
          <center>
-                <TableView fx:id="tv" onMouseClicked="#selectedItemTV" prefHeight="539.0" prefWidth="566.0" styleClass="table_view" BorderPane.alignment="CENTER">
+                <TableView fx:id="tv" onMouseClicked="#selectedItemTV" prefHeight="700.0" prefWidth="700.0" styleClass="table_view" BorderPane.alignment="CENTER">
                     <columns>
                         <TableColumn fx:id="tv_id" prefWidth="42.0" styleClass="table_columns" text="ID" />
                         <TableColumn fx:id="tv_fn" prefWidth="117.0" styleClass="table_columns" text="First Name" />

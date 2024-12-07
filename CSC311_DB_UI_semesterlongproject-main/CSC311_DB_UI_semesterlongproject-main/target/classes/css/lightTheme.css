@@ -26,9 +26,9 @@
     -fx-text-fill: black;
 }
 
-
 .menu_bar {
     -fx-background-color: #589511;
+    -fx-text-size: 15pt;
 }
 
 .anchor_pane {
@@ -37,7 +37,6 @@
 
 .text_field_pane {
     -fx-background-color: #284a07;
-
 }
 
 .image_view{
@@ -45,9 +44,6 @@
     -fx-border-color: black;
     -fx-border-width: 2;
 }
-
-
-
 
 .table-view .column-header,
 .table-view .column-header-background .filler {
@@ -67,14 +63,13 @@
     -fx-border-width: 0;
   -fx-text-fill: black;
   -fx-alignment: CENTER_LEFT;
-
 }
+
 .table-row-cell:selected {
    -fx-background-color: whitesmoke;
    -fx-text-background-color:  #33FF55;
-
-
 }
+
 .table-view:focused .table-row-cell:selected .table-cell {
     -fx-background-color: #79e45c;
     -fx-text-fill: #040101;
@@ -85,7 +80,6 @@
 .table-view .increment-button ,.table-view .decrement-button {
     -fx-background-color:transparent;
 	-fx-background-radius: 2em;
-
 }
 
 /* The main scrollbar **track** CSS class  */
@@ -93,7 +87,6 @@
 .table-view .scroll-bar:vertical .track{
 	-fx-background-color: transparent;
 	-fx-border-color:derive( #27400a,80%);
-
 	-fx-background-radius: 2em;
 	-fx-border-radius:2em;
 }
@@ -105,8 +98,6 @@
     -fx-background-insets: 1, 0, 0;
     -fx-background-radius: 2em;
 }
-
-
 
 .text-field {
     -fx-background-color: #88ff8e;
@@ -134,4 +125,9 @@
     -fx-background-color: #a9d5ac;
     -fx-border-color: #88ff8e;
     -fx-text-fill: black;
+}
+
+.progress-bar {
+    -fx-accent: #88ff8e;
+    -fx-background-color: black;
 }

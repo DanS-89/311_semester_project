@@ -91,6 +91,12 @@ public class SignUpController {
     }
 
 
+    /**
+     * Method to save a new user to the database
+     * @param username username to be saved database
+     * @param password password to be saved to database
+     * @param email email to be saved to database
+     */
     private void saveToDatabase(String username, String password, String email) {
         try {
             dbConnectivity.saveToDatabase(username, password, email);

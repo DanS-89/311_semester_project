@@ -4,16 +4,16 @@ package model;
  * Enum representing majors available for use within the application
  */
 public enum Major {
-    Business,
-    CSC,
-    CPIS,
     Accounting,
-    Engineering,
-    Nursing,
-    Biology,
-    Chemistry,
     Architecture,
-    Physics,
+    Biology,
+    Business,
+    Chemistry,
+    CPIS,
+    CSC,
+    Engineering,
     English,
-    History
-}
+    History,
+    Nursing,
+    Physics
+    }

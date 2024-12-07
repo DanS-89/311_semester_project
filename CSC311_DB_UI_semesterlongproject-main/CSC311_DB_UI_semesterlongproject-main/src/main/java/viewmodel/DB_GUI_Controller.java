@@ -1,11 +1,12 @@
 package viewmodel;
 import com.azure.storage.blob.BlobClient;
 import dao.StorageUploader;
+import javafx.animation.PauseTransition;
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.print.PrinterJob;
+import javafx.print.*;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
@@ -16,6 +17,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import model.Major;
 import dao.DbConnectivityClass;
@@ -40,6 +42,8 @@ import service.MyLogger;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -64,7 +68,7 @@ public class DB_GUI_Controller implements Initializable {
     @FXML
     MenuBar menuBar;
     @FXML
-    MenuItem editItem, deleteItem, copyItem, clearItem;
+    MenuItem editItem, deleteItem, copyItem, clearItem, addItem;
     @FXML
     ProgressBar progressBar;
     @FXML
@@ -79,7 +83,6 @@ public class DB_GUI_Controller implements Initializable {
     private final DbConnectivityClass cnUtil = new DbConnectivityClass();
     private final ObservableList<Person> data = cnUtil.getData();
 
-
     //regex expressions for user input validation
     private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z]{2,30}$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9._%+-]+@farmingdale\\.edu$");
@@ -89,9 +92,10 @@ public class DB_GUI_Controller implements Initializable {
      * Initializes the GUI components and binds data to the table view
      * @param url The location used to resolve relative paths for the root object, or
      * {@code null} if the location is not known
-     * @param resourceBundle
-     * The resources used to localize the root object, or {@code null} if
+     * @param resourceBundle The resources used to localize the root object, or {@code null} if
      * the root object was not localized.
+     * Initializes buttons with disabled properties and key listeners for shortcuts
+     * Sets up a row listener and makes cells in the table view clickable and editable
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -193,6 +197,33 @@ public class DB_GUI_Controller implements Initializable {
                         case C:
                             copyRecord();
                             break;
+                        case P:
+                            showImage();
+                            break;
+                        case N:
+                            addUserRecord();
+                            break;
+                        case G:
+                            showMajorDistributionReport();
+                            break;
+                        case X:
+                            closeApplication();
+                            break;
+                        case I:
+                            onImportCSV();
+                            break;
+                        case O:
+                            onExportCSV();
+                            break;
+                        case A:
+                            addNewRecord();
+                            break;
+                        case H:
+                            displayHelp();
+                            break;
+                        case Q:
+                            displayAbout();
+                            break;
                         default:
                             break;
                     }
@@ -207,13 +238,20 @@ public class DB_GUI_Controller implements Initializable {
 
             addButton.disableProperty().bind(Bindings.createBooleanBinding(() -> tv.getSelectionModel().getSelectedItem() != null || !validateName(first_name.getText()) || !validateName(last_name.getText()) ||
                             !validateName(department.getText()) || !validateEmail(email.getText()) || majorComboBox.getSelectionModel().getSelectedItem() == null,
-                            first_name.textProperty(), last_name.textProperty(), department.textProperty(), email.textProperty(), imageURL.textProperty(),
+                            first_name.textProperty(), last_name.textProperty(), department.textProperty(), email.textProperty(),
                             majorComboBox.getSelectionModel().selectedItemProperty(), tv.getSelectionModel().selectedItemProperty()
                 )
             );
 
             clearButton.disableProperty().bind(first_name.textProperty().isEmpty().and(last_name.textProperty().isEmpty()).and(department.textProperty().isEmpty())
                     .and(majorComboBox.getSelectionModel().selectedItemProperty().isNull()).and(email.textProperty().isEmpty()).and(imageURL.textProperty().isEmpty()));
+
+            addItem.disableProperty().bind(Bindings.createBooleanBinding(() -> tv.getSelectionModel().getSelectedItem() != null || !validateName(first_name.getText()) ||
+                            !validateName(last_name.getText()) || !validateName(department.getText()) || !validateEmail(email.getText()) ||
+                            majorComboBox.getSelectionModel().getSelectedItem() == null, first_name.textProperty(), last_name.textProperty(), department.textProperty(),
+                            email.textProperty(), majorComboBox.getSelectionModel().selectedItemProperty(), tv.getSelectionModel().selectedItemProperty()
+                    )
+            );
 
             editItem.disableProperty().bind(tv.getSelectionModel().selectedItemProperty().isNull());
 
@@ -235,6 +273,7 @@ public class DB_GUI_Controller implements Initializable {
 
     /**
      * Adds a new Person record to the database and updates the table view
+     * Notifies the user if the record has been added successfully or not
      */
     @FXML
     protected void addNewRecord() {
@@ -274,7 +313,7 @@ public class DB_GUI_Controller implements Initializable {
     }
 
     /**
-     * Clears all input fields in the form and resets the text fields
+     * Clears all input fields in the form and resets the text fields and combo box
      */
     @FXML
     protected void clearForm() {
@@ -285,8 +324,8 @@ public class DB_GUI_Controller implements Initializable {
         email.setText("");
         imageURL.setText("");
 
+        majorComboBox.setPromptText("Major");
         tv.getSelectionModel().clearSelection();
-        tv.requestFocus();
     }
 
     /**
@@ -425,7 +464,7 @@ public class DB_GUI_Controller implements Initializable {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Delete Record");
             alert.setHeaderText("Record deleted");
-            alert.setContentText("record deleted successfully");
+            alert.setContentText("Record deleted successfully");
             alert.showAndWait();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -479,7 +518,7 @@ public class DB_GUI_Controller implements Initializable {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Copy Failed");
             alert.setHeaderText("Copy Failed");
-            alert.setContentText("An error occured");
+            alert.setContentText("An error occurred");
             alert.showAndWait();
         }
     }
@@ -505,20 +544,9 @@ public class DB_GUI_Controller implements Initializable {
     }
 
     /**
-     * Displays an image selected by the user
+     * Displays an image selected by the user and saves it to the database
+     * Notifies the user if the image was successfully uploaded or not
      */
-    /**
-    @FXML
-    protected void showImage() {
-        File file = (new FileChooser()).showOpenDialog(img_view.getScene().getWindow());
-        if (file != null) {
-            img_view.setImage(new Image(file.toURI().toString()));
-            Task<Void> uploadTask = createUploadTask(file, progressBar);
-            progressBar.progressProperty().bind(uploadTask.progressProperty());
-            new Thread(uploadTask).start();
-        }
-    }
-*/
     @FXML
     protected void showImage(){
         FileChooser fileChooser = new FileChooser();
@@ -530,6 +558,7 @@ public class DB_GUI_Controller implements Initializable {
                 img_view.setImage(new Image(file.toURI().toString()));
                 String blobName = UUID.randomUUID().toString() + "_" + file.getName();
                 Task<Void> uploadTask = createUploadTask(file, blobName, progressBar);
+                progressBar.progressProperty().bind(uploadTask.progressProperty());
                 uploadTask.setOnSucceeded(event -> {
                     try {
                         StorageUploader storageUploader = new StorageUploader();
@@ -544,38 +573,49 @@ public class DB_GUI_Controller implements Initializable {
                             alert.setHeaderText("Image uploaded");
                             alert.setContentText("Image uploaded successfully");
                             alert.showAndWait();
+                            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+                            pause.setOnFinished(e -> {
+                                        progressBar.progressProperty().unbind();
+                                        progressBar.setProgress(0);
+                                    });
+                                    pause.play();
                         }
                     } catch (Exception e) {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error");
                         alert.setHeaderText("Cannot upload image");
-                        alert.setContentText("An error occured while uploading the image");
+                        alert.setContentText("An error occurred while uploading the image");
                         alert.showAndWait();
                     }
                 });
+                uploadTask.setOnFailed(event -> {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Cannot upload image");
+                    alert.setContentText("An error occurred while uploading the image");
+                    uploadTask.getException().getMessage();
+                });
+
                 new Thread(uploadTask).start();
             } catch (Exception e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("Cannot upload image");
-                alert.setContentText("An error occured while uploading the image");
+                alert.setContentText("An error occurred while uploading the image");
                 alert.showAndWait();
             }
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Cannot upload image");
-            alert.setContentText("An error occured while uploading the image");
+            alert.setContentText("An error occurred while uploading the image");
             alert.showAndWait();
         }
     }
 
     /**
-     * Uses the showSomeone() function
-     *     @FXML
-     *     protected void addUserRecord() {
-     *         showSomeone();
-     *     }
+     * Function for the menu item New. Adds a new user entry to the database
+     * Notifies the user if upload is successful or not
      */
    @FXML
     protected void addUserRecord() {
@@ -613,7 +653,6 @@ public class DB_GUI_Controller implements Initializable {
             }
         }
     }
-
 
     /**
      * Populates the form fields with data from the selected table view item
@@ -668,57 +707,8 @@ public class DB_GUI_Controller implements Initializable {
     }
 
     /**
-     * Displays dialogue to input information for a new user
-     */
-    public void showSomeone() {
-        Dialog<Results> dialog = new Dialog<>();
-        dialog.setTitle("New User");
-        dialog.setHeaderText("Please specify…");
-        DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        TextField textField1 = new TextField("Name");
-        TextField textField2 = new TextField("Last Name");
-        TextField textField3 = new TextField("Email ");
-        ObservableList<Major> options =
-                FXCollections.observableArrayList(Major.values());
-        ComboBox<Major> comboBox = new ComboBox<>(options);
-        comboBox.getSelectionModel().selectFirst();
-        dialogPane.setContent(new VBox(8, textField1, textField2,textField3, comboBox));
-        Platform.runLater(textField1::requestFocus);
-        dialog.setResultConverter((ButtonType button) -> {
-            if (button == ButtonType.OK) {
-                return new Results(textField1.getText(),
-                        textField2.getText(), comboBox.getValue());
-            }
-            return null;
-        });
-        Optional<Results> optionalResult = dialog.showAndWait();
-        optionalResult.ifPresent((Results results) -> {
-            MyLogger.makeLog(
-                    results.fname + " " + results.lname + " " + results.major);
-        });
-    }
-
-    /**
-     * Class that represents the results of a user input
-     */
-    private static class Results {
-
-        String fname;
-        String lname;
-        Major major;
-
-        public Results(String name, String date, Major venue) {
-            this.fname = name;
-            this.lname = date;
-            this.major = venue;
-        }
-    }
-
-
-    /**
      * Checks to see if an input email already exists in the database
-     * @param email Email address to check
+     * @param email The email address to check
      * @return true if the email address already exists, false otherwise
      */
     private boolean isDuplicateEmail(String email) {
@@ -768,7 +758,7 @@ public class DB_GUI_Controller implements Initializable {
     /**private boolean validateURL(String url){
         return URL_PATTERN.matcher(url).matches();
     }
-*/
+     */
     /**
      * Validates that a major is selected in the combo box, it is not null
      * @param selectedMajor Major selected in the comboBox
@@ -779,30 +769,69 @@ public class DB_GUI_Controller implements Initializable {
     }
 
     /**
-     * Imports user data from a CSV file
+     * Imports user data from a CSV or xls file and inserts it to the end of the current table view
+     * Saves the imported data to the database
      */
     @FXML
     private void onImportCSV(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open CSV file");
 
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV and Excel Files", "*.csv", "*.xls"));
         File file = fileChooser.showOpenDialog(null);
 
         if(file != null){
+            int importedCount = 0;
             try(BufferedReader reader = new BufferedReader(new FileReader(file))){
                 String line;
-                data.clear();
 
                 while((line = reader.readLine()) != null){
                     String[] fields = line.split(",");
-                    if(fields.length == 6){
-                        Person person = new Person(fields[0], fields[1], fields[2], Major.valueOf(fields[3]), fields[4], fields[5]);
+                    if(fields.length == 7){
+                        try {
+                            Person person = new Person(
+                                    Integer.parseInt(fields[0]),
+                                    fields[1],
+                                    fields[2],
+                                    fields[3],
+                                    Major.valueOf(fields[4]),
+                                    fields[5],
+                                    fields[6]
+                            );
 
-                        data.add(person);
+                            boolean exists = data.stream().anyMatch(p -> p.getId() == person.getId());
+                            if (!exists) {
+                                data.add(person);
+                                try {
+                                    cnUtil.insertUser(person);
+                                    importedCount++;
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                                    alert.setTitle("Error");
+                                    alert.setHeaderText("Error with entry");
+                                    alert.setContentText("Error with entry: " + e.getMessage());
+                                }
+                            }
+                        } catch (Exception e) {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error");
+                            alert.setHeaderText("Import Error");
+                            alert.setContentText("Skipping invalid record: " + e.getMessage());
+                        }
                     }
                 }
+                tv.refresh();
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Import Success");
+                alert.setHeaderText("File Imported Successfully");
+                alert.setContentText("File imported " + importedCount + " records successfully");
+                alert.showAndWait();
             } catch (IOException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Import Error");
+                alert.setContentText("Error importing file: " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -817,7 +846,7 @@ public class DB_GUI_Controller implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export CSV file");
 
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV and Excel Files", "*.csv", "*.xls"));
         File file = fileChooser.showSaveDialog(null);
 
         if(file != null){
@@ -829,7 +858,8 @@ public class DB_GUI_Controller implements Initializable {
                             person.getLastName(),
                             person.getDepartment(),
                             person.getMajor().toString(),
-                            person.getEmail()));
+                            person.getEmail(),
+                            person.getImageURL()));
                     writer.newLine();
                 }
             } catch(IOException e){
@@ -844,36 +874,6 @@ public class DB_GUI_Controller implements Initializable {
      * @param progressBar ProgressBar object to update during the upload
      * @return A Task<Void> which represents the upload
      */
-    /**
-    @FXML
-    private Task<Void> createUploadTask(File file, ProgressBar progressBar) {
-        return new Task<>() {
-            @Override
-            protected Void call() throws Exception {
-                BlobClient blobClient = store.getContainerClient().getBlobClient(file.getName());
-                long fileSize = Files.size(file.toPath());
-                long uploadedBytes = 0;
-
-                try (FileInputStream fileInputStream = new FileInputStream(file);
-                     OutputStream blobOutputStream = blobClient.getBlockBlobClient().getBlobOutputStream()) {
-
-                    byte[] buffer = new byte[1024 * 1024]; // 1 MB buffer size
-                    int bytesRead;
-
-                    while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                        blobOutputStream.write(buffer, 0, bytesRead);
-                        uploadedBytes += bytesRead;
-
-                        // Calculate and update progress as a percentage
-                        int progress = (int) ((double) uploadedBytes / fileSize * 100);
-                        updateProgress(progress, 100);
-                    }
-                }
-                return null;
-            }
-        };
-    }
-*/
     @FXML
     private Task<Void> createUploadTask(File file,String blobName, ProgressBar progressBar) {
         return new Task<>() {
@@ -908,6 +908,9 @@ public class DB_GUI_Controller implements Initializable {
         };
     }
 
+    /**
+     * Sets up a listener for row selection in the table view
+     */
     private void setupRowSelectionListener(){
         tv.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue != null){
@@ -916,6 +919,10 @@ public class DB_GUI_Controller implements Initializable {
         });
     }
 
+    /**
+     * Populates the form fields with the details of the selected record in the table view
+     * @param selectedPerson Person object selected from the table view
+     */
     private void displaySelectedRecord(Person selectedPerson) {
         try {
             first_name.setText(selectedPerson.getFirstName());
@@ -946,6 +953,10 @@ public class DB_GUI_Controller implements Initializable {
         }
     }
 
+    /**
+     * Generates and displays a bar chart showing the distribution of majors among the data records
+     * Includes a "Print" button to print the displayed chart
+     */
     @FXML
     private void showMajorDistributionReport(){
         HashMap<String, Integer> majorCounts = new HashMap<>();
@@ -983,10 +994,29 @@ public class DB_GUI_Controller implements Initializable {
         stage.show();
     }
 
+    /**
+     * Method for printing the bar chart report containing a count  by Major. The graph is a node and sent in
+     * landscape orientation fitting to 1 page
+     * @param node The node to be printed
+     */
     @FXML
     private void printChart(Node node){
         PrinterJob printerJob = PrinterJob.createPrinterJob();
         if(printerJob != null){
+            PageLayout pageLayout = printerJob.getPrinter().createPageLayout(
+                    Paper.A4,
+                    PageOrientation.LANDSCAPE,
+                    Printer.MarginType.DEFAULT
+            );
+
+            printerJob.getJobSettings().setPageLayout(pageLayout);
+
+            double scaleX = pageLayout.getPrintableWidth() / node.getBoundsInLocal().getWidth();
+            double scaleY = pageLayout.getPrintableHeight() / node.getBoundsInLocal().getHeight();
+            double scale = Math.min(scaleX, scaleY);
+            node.setScaleX(scale);
+            node.setScaleY(scale);
+
             boolean proceed = printerJob.showPrintDialog(null);
             if(proceed){
                 boolean printed = printerJob.printPage(node);
@@ -1005,6 +1035,8 @@ public class DB_GUI_Controller implements Initializable {
                 }
                 printerJob.endJob();
             }
+            node.setScaleX(1);
+            node.setScaleY(1);
         }
     }
 }
