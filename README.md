@@ -138,8 +138,6 @@ Technologies Used:
 
     Maven: Dependency and project build management.
 
-    SLF4J: Logging framework.
-
     OpenCSV: For CSV parsing and writing.
 
 
